@@ -1,2 +1,2 @@
 # Final-Project
-Nathaniel Olveira and Zhixuan Dong's final project for AP Computer Science A.
+Zhixuan Dong and Nathaniel Olveira's final project for AP Computer Science A.
