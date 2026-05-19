@@ -65,8 +65,10 @@ def resetMouseSelection():
     selected_column = -1
     selected_piece = None
     selected_is_black = False
-    
 
+#TODO: make this function
+def movePiece():
+    pass
 
 #makes it so the left click event doesn't run multiple times if you hold left mouse button down
 mouse_debounce = False
