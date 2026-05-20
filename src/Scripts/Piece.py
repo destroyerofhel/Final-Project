@@ -82,7 +82,17 @@ class Queen(Piece):
             moves+=[(self.row-distance, self.column-distance)]
         return moves
 
-
 class King(Piece):
+    def getAvailableMoves(self):
+        moves = []
+        moves+=[(self.row + 1, self.column)]
+        moves+=[(self.row + 1, self.column + 1)]
+        moves+=[(self.row + 1, self.column - 1)]
+        moves+=[(self.row, self.column + 1)]
+        moves+=[(self.row, self.column - 1)]
+        moves+=[(self.row - 1, self.column + 1)]
+        moves+=[(self.row - 1, self.column)]
+        moves+=[(self.row - 1, self.column - 1)]
+        return moves
     def isInCheck(self):
         pass
