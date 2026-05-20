@@ -15,11 +15,13 @@ class ChessPiece(Enum):
 pygame.init()
 
 FPS_CAP = 60
-WIDTH = 1024
-HEIGHT = 1024
+WIDTH = 800
+HEIGHT = 800
 BOARD_ROWS = 8
 BOARD_COLUMNS = 8
-SRC_DIRECTORY = "D:\\Software Development\\final project csa\\Final-Project\\src\\"
+
+#SRC_DIRECTORY = "C:\\Users\\NathanielOlveira\\OneDrive - NYC Public Schools\\Documents\\AI chess game\\Final-Project-1\\src"
+SRC_DIRECTORY = "src\\"
 SPRITES_DIRECTORY = SRC_DIRECTORY + "Data\\Sprites\\"
 
 WHITE = (255, 255, 255)
