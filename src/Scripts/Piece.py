@@ -1,28 +1,36 @@
 import pygame
 from pygame import Vector2
 import Config
-from Main import board
 
 class Piece:
-    def __init__(self, position: Vector2):
+    def __init__(self, position: Vector2, isWhite: bool, type: int):
         self.row = position.x
         self.column = position.y
         self.selected = False
-        self.is_white = True
+        self.is_white = isWhite
+        self.piece_type = type
     def movePiece(self):
         pass
     def drawPiece(self, screen):
-        pass
+        import Main
+        color = "White/"
+        if not self.is_white: color = "Black/"
+        path = Main.SPRITES_DIRECTORY + color + Main.ChessPiece(self.piece_type).name.lower() + ".png"
+        size = (Config.WIDTH/Config.BOARD_COLUMNS, Config.HEIGHT/Config.BOARD_ROWS)
+        loaded_image = pygame.transform.scale(pygame.image.load(path), (size))
+        screen.blit(loaded_image, (0,0))
+
     def removePiece(self):
         pass
     def getAvailableMoves(self):
         pass
     def selectPiece(self, screen):
+        import Main
         self.selected = True
         for i in self.getAvailableMoves():
             x_pos = i[0]
             y_pos = i[1]
-            if board[x_pos][y_pos] == 0 or board[x_pos][y_pos].is_white != self.is_white:
+            if Main.board[x_pos][y_pos] == 0 or Main.board[x_pos][y_pos].is_white != self.is_white:
                 x_size = Config.WIDTH // Config.BOARD_COLUMNS
                 y_size = Config.HEIGHT // Config.BOARD_ROWS
                 pygame.draw.circle(screen, (255, 0, 0), (x_pos, y_pos), x_size//2)
@@ -94,5 +102,6 @@ class King(Piece):
         moves+=[(self.row - 1, self.column)]
         moves+=[(self.row - 1, self.column - 1)]
         return moves
+    
     def isInCheck(self):
         pass
