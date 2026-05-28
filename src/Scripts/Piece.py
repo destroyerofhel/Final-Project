@@ -3,11 +3,11 @@ from pygame import Vector2
 import Config
 
 class Piece:
-    def __init__(self, position: tuple[int, int], isWhite: bool):
+    def __init__(self, position: tuple[int, int], is_white: bool):
         self.row = position.x
         self.column = position.y
         self.selected = False
-        self.is_white = isWhite
+        self.is_white = is_white
     def movePiece(self):
         pass
     def drawPiece(self, screen):
@@ -30,7 +30,7 @@ class Piece:
 class Pawn(Piece):
     def drawPiece(self, screen):
         color = "White";
-        if(not self.isWhite):
+        if(not self.is_white):
             color = "Black";
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "pawn.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
         screen.blit(loaded_image, position)
@@ -43,7 +43,7 @@ class Pawn(Piece):
 class Bishop(Piece):
     def drawPiece(self, screen):
         color = "White";
-        if(not self.isWhite):
+        if(not self.is_white):
             color = "Black";
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "bishop.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
         screen.blit(loaded_image, position)
@@ -59,7 +59,7 @@ class Bishop(Piece):
 class Knight(Piece):
     def drawPiece(self, screen):
         color = "White";
-        if(not self.isWhite):
+        if(not self.is_white):
             color = "Black";
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "knight.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
         screen.blit(loaded_image, position)
@@ -78,7 +78,7 @@ class Knight(Piece):
 class Rook(Piece):
     def drawPiece(self, screen):
         color = "White";
-        if(not self.isWhite):
+        if(not self.is_white):
             color = "Black";
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "rook.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
         screen.blit(loaded_image, position)
@@ -94,7 +94,7 @@ class Rook(Piece):
 class Queen(Piece):
     def drawPiece(self, screen):
         color = "White";
-        if(not self.isWhite):
+        if(not self.is_white):
             color = "Black";
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "queen.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
         screen.blit(loaded_image, position)
@@ -115,7 +115,7 @@ class Queen(Piece):
 class King(Piece):
     def drawPiece(self, screen):
         color = "White";
-        if(not self.isWhite):
+        if(not self.is_white):
             color = "Black";
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "king.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
         screen.blit(loaded_image, position)
