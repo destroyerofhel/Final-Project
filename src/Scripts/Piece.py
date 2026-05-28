@@ -3,23 +3,15 @@ from pygame import Vector2
 import Config
 
 class Piece:
-    def __init__(self, position: Vector2, isWhite: bool, type: int):
+    def __init__(self, position: tuple[int, int], isWhite: bool):
         self.row = position.x
         self.column = position.y
         self.selected = False
         self.is_white = isWhite
-        self.piece_type = type
     def movePiece(self):
         pass
     def drawPiece(self, screen):
-        import Main
-        color = "White/"
-        if not self.is_white: color = "Black/"
-        path = Main.SPRITES_DIRECTORY + color + Main.ChessPiece(self.piece_type).name.lower() + ".png"
-        size = (Config.WIDTH/Config.BOARD_COLUMNS, Config.HEIGHT/Config.BOARD_ROWS)
-        loaded_image = pygame.transform.scale(pygame.image.load(path), (size))
-        screen.blit(loaded_image, (0,0))
-
+        pass
     def removePiece(self):
         pass
     def getAvailableMoves(self):
@@ -36,6 +28,12 @@ class Piece:
                 pygame.draw.circle(screen, (255, 0, 0), (x_pos, y_pos), x_size//2)
 
 class Pawn(Piece):
+    def drawPiece(self, screen):
+        color = "White";
+        if(not self.isWhite):
+            color = "Black";
+        loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "pawn.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
+        screen.blit(loaded_image, position)
     def getAvailableMoves(self):
         if self.is_white:
             return [self.row, self.column + 1]
@@ -43,6 +41,12 @@ class Pawn(Piece):
             return [self.row, self.column - 1]
 
 class Bishop(Piece):
+    def drawPiece(self, screen):
+        color = "White";
+        if(not self.isWhite):
+            color = "Black";
+        loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "bishop.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
+        screen.blit(loaded_image, position)
     def getAvailableMoves(self):
         moves = []
         for distance in range(1,8):
@@ -53,6 +57,12 @@ class Bishop(Piece):
         return moves
 
 class Knight(Piece):
+    def drawPiece(self, screen):
+        color = "White";
+        if(not self.isWhite):
+            color = "Black";
+        loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "knight.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
+        screen.blit(loaded_image, position)
     def getAvailableMoves(self):
         moves = []
         moves+=[(self.row + 2, self.column + 1)]
@@ -66,6 +76,12 @@ class Knight(Piece):
         return moves
     
 class Rook(Piece):
+    def drawPiece(self, screen):
+        color = "White";
+        if(not self.isWhite):
+            color = "Black";
+        loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "rook.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
+        screen.blit(loaded_image, position)
     def getAvailableMoves(self):
         moves = []
         for distance in range(1, 8):
@@ -76,6 +92,12 @@ class Rook(Piece):
         return moves
 
 class Queen(Piece):
+    def drawPiece(self, screen):
+        color = "White";
+        if(not self.isWhite):
+            color = "Black";
+        loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "queen.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
+        screen.blit(loaded_image, position)
     def getAvailableMoves(self):
         moves = []
         for distance in range(1, 8):
@@ -91,6 +113,12 @@ class Queen(Piece):
         return moves
 
 class King(Piece):
+    def drawPiece(self, screen):
+        color = "White";
+        if(not self.isWhite):
+            color = "Black";
+        loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "king.png"), (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS))
+        screen.blit(loaded_image, position)
     def getAvailableMoves(self):
         moves = []
         moves+=[(self.row + 1, self.column)]
