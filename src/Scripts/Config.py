@@ -3,3 +3,5 @@ WIDTH = 800
 HEIGHT = 800
 BOARD_ROWS = 8
 BOARD_COLUMNS = 8
+SRC_DIRECTORY = "/workspaces/Final-Project/src/"
+SPRITES_DIRECTORY = SRC_DIRECTORY + "Data/Sprites/"
