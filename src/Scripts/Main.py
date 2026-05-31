@@ -3,6 +3,7 @@ import sys
 from typing import List
 from enum import Enum
 from pygame import Vector2
+import Piece 
 
 class ChessPiece(Enum):
         EMPTY = 0
@@ -46,7 +47,6 @@ board : List[List[int]] = [
     [4,3,2,6,5,2,3,4]
 ]
 def convertBoardToObj():
-    import Piece 
     isWhite = True
     for x,row in enumerate(board):
         for y in range(len(row)):
