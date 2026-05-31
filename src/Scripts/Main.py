@@ -5,15 +5,6 @@ from enum import Enum
 from pygame import Vector2
 import Piece 
 
-class ChessPiece(Enum):
-        EMPTY = 0
-        PAWN = 1
-        BISHOP = 2
-        KNIGHT = 3
-        ROOK = 4
-        QUEEN = 5
-        KING = 6
-
 pygame.init()
 
 FPS_CAP = 60
