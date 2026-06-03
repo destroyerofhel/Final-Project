@@ -27,8 +27,8 @@ class Piece:
         pass
     def getValidMoves(self, board):
         pass
-    def getAvailableMoves(self):
-        pass
+    def getAvailableMoves(self, board):
+        return self.getValidMoves(board)
     def selectPiece(self, screen, board):
         for i in self.getValidMoves(board):
             x_pos = i[0]
@@ -156,17 +156,19 @@ class Pawn(Piece):
 
         if self.selected:
             self.selectPiece(screen, board)
-    def getAvailableMoves(self):
-        moves = []
-        if self.is_white:
-            moves.append((self.row - 1, self.column))
-            if self.row == 6:
-                moves.append((self.row - 2, self.column))
-        else:
-            moves.append((self.row + 1, self.column))
-            if self.row == 1:
-                moves.append((self.row + 2, self.column))
-        return moves
+    def getAvailableMoves(self, board):
+        # moves = []
+        # if self.is_white:
+        #     moves.append((self.row - 1, self.column))
+        #     if self.row == 6:
+        #         moves.append((self.row - 2, self.column))
+        # else:
+        #     moves.append((self.row + 1, self.column))
+        #     if self.row == 1:
+        #         moves.append((self.row + 2, self.column))
+        # return moves
+        return self.getValidMoves(board)
+        
     def getValidMoves(self, board):
         moves = []
         if self.is_white:
@@ -186,7 +188,7 @@ class Pawn(Piece):
             if self.row < Config.BOARD_ROWS - 1 and self.column > 0 and board[self.row + 1][self.column - 1].is_white != None and board[self.row + 1][self.column - 1].is_white != self.is_white:
                 moves.append((self.row + 1, self.column - 1))
             if self.row < Config.BOARD_ROWS - 1 and self.column < Config.BOARD_COLUMNS - 1 and board[self.row + 1][self.column + 1].is_white != None and board[self.row + 1][self.column + 1].is_white != self.is_white:
-                moves.append((self.row + 1, self.column + 1))
+                moves.append((self.row + 1, self.column + 1))       
         return moves
         
 class Bishop(Piece):
@@ -210,14 +212,15 @@ class Bishop(Piece):
         moves += self.checkDiagonalDownLeft(board)
 
         return keepInBounds(moves)
-    def getAvailableMoves(self):
-        moves = []
-        for distance in range(1,8):
-            moves+=[(self.row+distance, self.column+distance)]
-            moves+=[(self.row+distance, self.column-distance)]
-            moves+=[(self.row-distance, self.column+distance)]
-            moves+=[(self.row-distance, self.column-distance)]
-        return keepInBounds(moves)
+    def getAvailableMoves(self, board):
+        # moves = []
+        # for distance in range(1,8):
+        #     moves+=[(self.row+distance, self.column+distance)]
+        #     moves+=[(self.row+distance, self.column-distance)]
+        #     moves+=[(self.row-distance, self.column+distance)]
+        #     moves+=[(self.row-distance, self.column-distance)]
+        # return keepInBounds(moves)
+        return self.getValidMoves(board)
 
 class Knight(Piece):
     piece_type = 3
@@ -232,12 +235,12 @@ class Knight(Piece):
             self.selectPiece(screen, board)
     def getValidMoves(self, board):
         moves = []
-        for move in self.getAvailableMoves():
+        for move in self.getAvailableMoves(board):
             if move[0] >= 0 and move[0] < Config.BOARD_ROWS and move[1] >= 0 and move[1] < Config.BOARD_COLUMNS:
                 if board[move[0]][move[1]].is_white == None or board[move[0]][move[1]].is_white != self.is_white:
                     moves.append(move)
         return keepInBounds(moves)
-    def getAvailableMoves(self):
+    def getAvailableMoves(self, board):
         moves = []
         moves+=[(self.row + 2, self.column + 1)]
         moves+=[(self.row + 2, self.column - 1)]
@@ -270,14 +273,15 @@ class Rook(Piece):
         moves += self.checkHorizontalLeft(board)
 
         return keepInBounds(moves)
-    def getAvailableMoves(self):
-        moves = []
-        for distance in range(1, 8):
-            moves+=[(self.row+distance, self.column)]
-            moves+=[(self.row-distance, self.column)]
-            moves+=[(self.row, self.column+distance)]
-            moves+=[(self.row, self.column-distance)]
-        return moves
+    def getAvailableMoves(self, board):
+        # moves = []
+        # for distance in range(1, 8):
+        #     moves+=[(self.row+distance, self.column)]
+        #     moves+=[(self.row-distance, self.column)]
+        #     moves+=[(self.row, self.column+distance)]
+        #     moves+=[(self.row, self.column-distance)]
+        # return moves
+        return self.getValidMoves(board)
 
 class Queen(Piece):
     piece_type = 5
@@ -304,19 +308,20 @@ class Queen(Piece):
         moves += self.checkDiagonalDownLeft(board)
 
         return keepInBounds(moves)
-    def getAvailableMoves(self):
-        moves = []
-        for distance in range(1, 8):
-            moves+=[(self.row+distance, self.column)]
-            moves+=[(self.row-distance, self.column)]
-            moves+=[(self.row, self.column+distance)]
-            moves+=[(self.row, self.column-distance)]
+    def getAvailableMoves(self, board):
+        # moves = []
+        # for distance in range(1, 8):
+        #     moves+=[(self.row+distance, self.column)]
+        #     moves+=[(self.row-distance, self.column)]
+        #     moves+=[(self.row, self.column+distance)]
+        #     moves+=[(self.row, self.column-distance)]
             
-            moves+=[(self.row+distance, self.column+distance)]
-            moves+=[(self.row+distance, self.column-distance)]
-            moves+=[(self.row-distance, self.column+distance)]
-            moves+=[(self.row-distance, self.column-distance)]
-        return keepInBounds(moves)
+        #     moves+=[(self.row+distance, self.column+distance)]
+        #     moves+=[(self.row+distance, self.column-distance)]
+        #     moves+=[(self.row-distance, self.column+distance)]
+        #     moves+=[(self.row-distance, self.column-distance)]
+        # return keepInBounds(moves)
+        return self.getValidMoves(board)
 
 class King(Piece):
     piece_type = 6
@@ -333,12 +338,16 @@ class King(Piece):
             self.selectPiece(screen, board)
     def getValidMoves(self, board):
         moves = []
-        for move in self.getAvailableMoves():
-            if move[0] >= 0 and move[0] < Config.BOARD_ROWS and move[1] >= 0 and move[1] < Config.BOARD_COLUMNS:
-                if board[move[0]][move[1]].is_white == None or board[move[0]][move[1]].is_white != self.is_white and Game.move_keeps_king_safe(board, self.row, self.column, move[0], move[1], self.is_white):
+        for move in self.getAvailableMoves(board):
+            row, column = move
+            if 0 <= row < Config.BOARD_ROWS and 0 <= column < Config.BOARD_COLUMNS:
+                target = board[row][column]
+                is_empty = target.is_white is None
+                is_enemy = target.is_white is not None and target.is_white != self.is_white
+                if (is_empty or is_enemy) and Game.move_keeps_king_safe(board, self.row, self.column, row, column, self.is_white):
                     moves.append(move)
         return keepInBounds(moves)
-    def getAvailableMoves(self):
+    def getAvailableMoves(self, board):
         moves = []
         moves+=[(self.row + 1, self.column)]
         moves+=[(self.row + 1, self.column + 1)]
@@ -352,6 +361,6 @@ class King(Piece):
     def isInCheck(self, board):
         for row_num, row in enumerate(board):
             for col_num, piece in enumerate(row):
-                if piece.is_white != self.is_white and piece.getValidMoves(board) != None and (self.row, self.column) in piece.getValidMoves(board):
+                if piece.is_white != self.is_white and piece.getAvailableMoves(board) != None and (self.row, self.column) in piece.getAvailableMoves(board):
                     return True
         return False

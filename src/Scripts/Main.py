@@ -4,7 +4,8 @@ from typing import List
 from enum import Enum
 from pygame import Vector2
 import Piece 
-import Game as Utils
+import Game
+
 class ChessPiece(Enum):
         EMPTY = 0
         PAWN = 1
@@ -51,6 +52,7 @@ board : List[List[int]] = [
     [4,3,2,5,6,2,3,4]
 ]
 
+
 # ladder mate setup
 # board = [
 #     [0,0,0,6+7,0,0,0,0],
@@ -64,10 +66,7 @@ board : List[List[int]] = [
 # ]
 
 
-Utils.convertBoardToObj(board)
-
-def convertBoardToScreenCoordinates(row : int, column : int) -> tuple[int, int]: 
-    return column*(WIDTH/BOARD_COLUMNS), row*(HEIGHT/BOARD_ROWS)
+Game.convertBoardToObj(board)
 
 chessboard_image = pygame.transform.scale(pygame.image.load("src\\Data\\Sprites\\board.png"), (WIDTH,HEIGHT))
 previous_piece = Piece.Empty((-1, -1), None)
@@ -86,7 +85,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     screen.blit(chessboard_image, (0,0))
-    
+ 
     if pygame.mouse.get_pressed()[0] and not mouse_debounce:
         mouse_debounce = True
         mouse_pos = pygame.mouse.get_pos()
@@ -109,7 +108,7 @@ while running:
             previous_piece.selected = False
             selected_piece.selected = True
         elif previous_piece.is_white != None and previous_piece.selected: #capture piece if different color
-            if whites_turn == previous_piece.is_white and valid_move and Utils.move_keeps_king_safe(board, previous_row, previous_column, row, column, previous_piece.is_white): #check if piece color matches turn
+            if whites_turn == previous_piece.is_white and valid_move and Game.move_keeps_king_safe(board, previous_row, previous_column, row, column, previous_piece.is_white): #check if piece color matches turn
                 previous_piece.selected = False
                 selected_piece.selected = False
                 board[row][column] = board[previous_row][previous_column]
@@ -135,10 +134,6 @@ while running:
                 in_check_white = idk4.isInCheck(board)
             elif idk4.is_white == False and type(idk4) == Piece.King:   
                 in_check_black = idk4.isInCheck(board)
-            if in_check_white:
-                print(f"White king is in check!")
-            if in_check_black:
-                print(f"Black king is in check!")
 
     for idk5, idk6 in enumerate(board):
         for idk7, idk8 in enumerate(idk6):
@@ -146,16 +141,16 @@ while running:
             text_surface = game_font.render(f"{idk5}, {idk7}", True, (0, 0, 0))
             screen.blit(text_surface, (idk7*(WIDTH/BOARD_COLUMNS), idk5*(HEIGHT/BOARD_ROWS)))
 
-    if Utils.is_checkmate(board, True):
+    if Game.is_checkmate(board, True):
         print("Checkmate! Black wins!")
-        running = False
-    elif Utils.is_checkmate(board, False):
+        running = True
+    elif Game.is_checkmate(board, False):
         print("Checkmate! White wins!")
-        running = False
-    elif Utils.is_stalemate(board, True):
+        running = True
+    elif Game.is_stalemate(board, True):
         print("Stalemate! It's a draw!")
         running = False
-    elif Utils.is_stalemate(board, False):
+    elif Game.is_stalemate(board, False):
         print("Stalemate! It's a draw!")
         running = False
     pygame.display.flip()
