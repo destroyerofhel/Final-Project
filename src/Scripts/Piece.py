@@ -26,9 +26,20 @@ class Piece:
     def removePiece(self):
         pass
     def getValidMoves(self, board):
-        pass
+        moves = []
+        if self.getAvailableMoves(board) == None:
+            return None
+        for move in self.getAvailableMoves(board):
+            row, column = move
+            if 0 <= row < Config.BOARD_ROWS and 0 <= column < Config.BOARD_COLUMNS:
+                target = board[row][column]
+                is_empty = target.is_white is None
+                is_enemy = target.is_white is not None and target.is_white != self.is_white
+                if (is_empty or is_enemy) and Game.move_keeps_king_safe(board, self.row, self.column, row, column, self.is_white):
+                    moves.append(move)
+        return keepInBounds(moves)
     def getAvailableMoves(self, board):
-        return self.getValidMoves(board)
+        pass
     def selectPiece(self, screen, board):
         for i in self.getValidMoves(board):
             x_pos = i[0]
@@ -47,7 +58,7 @@ class Piece:
                     radius
                 )
                 screen.blit(move_surface, (y_pos * x_size + x_size // 2 - radius, x_pos * y_size + y_size // 2 - radius))
-    
+
     def checkVerticalUp(self, board):
         moves = []
         for distance in range(1, self.row + 1):
@@ -157,19 +168,6 @@ class Pawn(Piece):
         if self.selected:
             self.selectPiece(screen, board)
     def getAvailableMoves(self, board):
-        # moves = []
-        # if self.is_white:
-        #     moves.append((self.row - 1, self.column))
-        #     if self.row == 6:
-        #         moves.append((self.row - 2, self.column))
-        # else:
-        #     moves.append((self.row + 1, self.column))
-        #     if self.row == 1:
-        #         moves.append((self.row + 2, self.column))
-        # return moves
-        return self.getValidMoves(board)
-        
-    def getValidMoves(self, board):
         moves = []
         if self.is_white:
             if self.row == 6 and board[self.row - 2][self.column].is_white == None and board[self.row - 1][self.column].is_white == None:
@@ -188,9 +186,10 @@ class Pawn(Piece):
             if self.row < Config.BOARD_ROWS - 1 and self.column > 0 and board[self.row + 1][self.column - 1].is_white != None and board[self.row + 1][self.column - 1].is_white != self.is_white:
                 moves.append((self.row + 1, self.column - 1))
             if self.row < Config.BOARD_ROWS - 1 and self.column < Config.BOARD_COLUMNS - 1 and board[self.row + 1][self.column + 1].is_white != None and board[self.row + 1][self.column + 1].is_white != self.is_white:
-                moves.append((self.row + 1, self.column + 1))       
-        return moves
-        
+                moves.append((self.row + 1, self.column + 1))  
+        return keepInBounds(moves)
+
+
 class Bishop(Piece):
     piece_type = 2
     def drawPiece(self, screen, board):
@@ -203,7 +202,7 @@ class Bishop(Piece):
 
         if self.selected:
             self.selectPiece(screen, board)
-    def getValidMoves(self, board):
+    def getAvailableMoves(self, board):
         moves = [] 
 
         moves += self.checkDiagonalUpRight(board)
@@ -212,15 +211,6 @@ class Bishop(Piece):
         moves += self.checkDiagonalDownLeft(board)
 
         return keepInBounds(moves)
-    def getAvailableMoves(self, board):
-        # moves = []
-        # for distance in range(1,8):
-        #     moves+=[(self.row+distance, self.column+distance)]
-        #     moves+=[(self.row+distance, self.column-distance)]
-        #     moves+=[(self.row-distance, self.column+distance)]
-        #     moves+=[(self.row-distance, self.column-distance)]
-        # return keepInBounds(moves)
-        return self.getValidMoves(board)
 
 class Knight(Piece):
     piece_type = 3
@@ -233,13 +223,6 @@ class Knight(Piece):
         screen.blit(loaded_image, (self.column*size[0], self.row*size[1]))
         if self.selected:
             self.selectPiece(screen, board)
-    def getValidMoves(self, board):
-        moves = []
-        for move in self.getAvailableMoves(board):
-            if move[0] >= 0 and move[0] < Config.BOARD_ROWS and move[1] >= 0 and move[1] < Config.BOARD_COLUMNS:
-                if board[move[0]][move[1]].is_white == None or board[move[0]][move[1]].is_white != self.is_white:
-                    moves.append(move)
-        return keepInBounds(moves)
     def getAvailableMoves(self, board):
         moves = []
         moves+=[(self.row + 2, self.column + 1)]
@@ -250,8 +233,13 @@ class Knight(Piece):
         moves+=[(self.row + 1, self.column - 2)]
         moves+=[(self.row - 1, self.column + 2)]
         moves+=[(self.row - 1, self.column - 2)]
-        return keepInBounds(moves)
-    
+
+        legal_moves = []
+        for move in keepInBounds(moves):
+            if board[move[0]][move[1]].is_white == None or board[move[0]][move[1]].is_white != self.is_white:
+                legal_moves.append(move)
+        return legal_moves
+
 class Rook(Piece):
     piece_type = 4
     def drawPiece(self, screen, board):
@@ -264,24 +252,14 @@ class Rook(Piece):
 
         if self.selected:
             self.selectPiece(screen, board)
-    def getValidMoves(self, board):
+    def getAvailableMoves(self, board):
         moves = []
-
         moves += self.checkVerticalUp(board)
         moves += self.checkVerticalDown(board)
         moves += self.checkHorizontalRight(board)
         moves += self.checkHorizontalLeft(board)
 
         return keepInBounds(moves)
-    def getAvailableMoves(self, board):
-        # moves = []
-        # for distance in range(1, 8):
-        #     moves+=[(self.row+distance, self.column)]
-        #     moves+=[(self.row-distance, self.column)]
-        #     moves+=[(self.row, self.column+distance)]
-        #     moves+=[(self.row, self.column-distance)]
-        # return moves
-        return self.getValidMoves(board)
 
 class Queen(Piece):
     piece_type = 5
@@ -295,7 +273,7 @@ class Queen(Piece):
         
         if self.selected:
             self.selectPiece(screen, board)
-    def getValidMoves(self, board):
+    def getAvailableMoves(self, board):
         moves = []
 
         moves += self.checkVerticalUp(board)
@@ -307,21 +285,7 @@ class Queen(Piece):
         moves += self.checkDiagonalDownRight(board)
         moves += self.checkDiagonalDownLeft(board)
 
-        return keepInBounds(moves)
-    def getAvailableMoves(self, board):
-        # moves = []
-        # for distance in range(1, 8):
-        #     moves+=[(self.row+distance, self.column)]
-        #     moves+=[(self.row-distance, self.column)]
-        #     moves+=[(self.row, self.column+distance)]
-        #     moves+=[(self.row, self.column-distance)]
-            
-        #     moves+=[(self.row+distance, self.column+distance)]
-        #     moves+=[(self.row+distance, self.column-distance)]
-        #     moves+=[(self.row-distance, self.column+distance)]
-        #     moves+=[(self.row-distance, self.column-distance)]
-        # return keepInBounds(moves)
-        return self.getValidMoves(board)
+        return moves
 
 class King(Piece):
     piece_type = 6
@@ -336,17 +300,7 @@ class King(Piece):
 
         if self.selected:
             self.selectPiece(screen, board)
-    def getValidMoves(self, board):
-        moves = []
-        for move in self.getAvailableMoves(board):
-            row, column = move
-            if 0 <= row < Config.BOARD_ROWS and 0 <= column < Config.BOARD_COLUMNS:
-                target = board[row][column]
-                is_empty = target.is_white is None
-                is_enemy = target.is_white is not None and target.is_white != self.is_white
-                if (is_empty or is_enemy) and Game.move_keeps_king_safe(board, self.row, self.column, row, column, self.is_white):
-                    moves.append(move)
-        return keepInBounds(moves)
+
     def getAvailableMoves(self, board):
         moves = []
         moves+=[(self.row + 1, self.column)]
@@ -357,7 +311,12 @@ class King(Piece):
         moves+=[(self.row - 1, self.column + 1)]
         moves+=[(self.row - 1, self.column)]
         moves+=[(self.row - 1, self.column - 1)]
-        return keepInBounds(moves)
+
+        legal_moves = []
+        for move in keepInBounds(moves):
+            if board[move[0]][move[1]].is_white == None or board[move[0]][move[1]].is_white != self.is_white:
+                legal_moves.append(move)
+        return legal_moves
     def isInCheck(self, board):
         for row_num, row in enumerate(board):
             for col_num, piece in enumerate(row):
