@@ -4,7 +4,9 @@ from typing import List
 from enum import Enum
 from pygame import Vector2
 import Piece 
-import Game as Utils
+import Game
+import Config
+
 class ChessPiece(Enum):
         EMPTY = 0
         PAWN = 1
@@ -16,11 +18,13 @@ class ChessPiece(Enum):
 
 pygame.init()
 
-FPS_CAP = 60
-WIDTH = 800
-HEIGHT = 800
-BOARD_ROWS = 8
-BOARD_COLUMNS = 8
+FPS_CAP = Config.FPS_CAP
+BOARD_ROWS = Config.BOARD_ROWS
+BOARD_COLUMNS = Config.BOARD_COLUMNS
+SCREEN_WIDTH = Config.SCREEN_WIDTH
+SCREEN_HEIGHT = Config.SCREEN_HEIGHT
+GAME_WIDTH = Config.GAME_WIDTH
+GAME_HEIGHT = Config.GAME_HEIGHT
 
 #SRC_DIRECTORY = "C:\\Users\\NathanielOlveira\\OneDrive - NYC Public Schools\\Documents\\AI chess game\\Final-Project-1\\src"
 SRC_DIRECTORY = "src"
@@ -29,7 +33,7 @@ SPRITES_DIRECTORY = SRC_DIRECTORY + "\\Data\\Sprites"
 WHITE = (255, 255, 255)
 BLUE = (50, 100, 255)
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 pygame.display.set_caption("AI Chess")
 
@@ -37,7 +41,6 @@ selected_row = -1
 selected_column = -1
 selected_piece : ChessPiece = Piece.Empty((-1, -1), None)
 selected_is_black : bool = False
-
 
 #8 by 8 grid (white : 0-6, black : 7-13), 0 = empty, 1 = pawn, 2 = bishop, 3 = knight, 4 = rook, 5 = queen, 6 = king; refer to ChessPiece enum
 board : List[List[int]] = [
@@ -50,6 +53,7 @@ board : List[List[int]] = [
     [1,1,1,1,1,1,1,1],
     [4,3,2,5,6,2,3,4]
 ]
+
 
 # ladder mate setup
 # board = [
@@ -64,12 +68,9 @@ board : List[List[int]] = [
 # ]
 
 
-Utils.convertBoardToObj(board)
+Game.convertBoardToObj(board)
 
-def convertBoardToScreenCoordinates(row : int, column : int) -> tuple[int, int]: 
-    return column*(WIDTH/BOARD_COLUMNS), row*(HEIGHT/BOARD_ROWS)
-
-chessboard_image = pygame.transform.scale(pygame.image.load("src\\Data\\Sprites\\board.png"), (WIDTH,HEIGHT))
+chessboard_image = pygame.transform.scale(pygame.image.load("src\\Data\\Sprites\\board.png"), (GAME_WIDTH,GAME_HEIGHT))
 previous_piece = Piece.Empty((-1, -1), None)
 
 #makes it so the left click event doesn't run multiple times if you hold left mouse button down
@@ -86,12 +87,12 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     screen.blit(chessboard_image, (0,0))
-    
+ 
     if pygame.mouse.get_pressed()[0] and not mouse_debounce:
         mouse_debounce = True
         mouse_pos = pygame.mouse.get_pos()
-        column = int(mouse_pos[0] // (WIDTH/BOARD_COLUMNS))
-        row = int(mouse_pos[1] // (HEIGHT/BOARD_ROWS))
+        column = int(mouse_pos[0] // (GAME_WIDTH/BOARD_COLUMNS))
+        row = int(mouse_pos[1] // (GAME_HEIGHT/BOARD_ROWS))
         selected_piece = board[row][column]
         selected_move = (row, column)
         print(f"Selected piece: {type(selected_piece).__name__} at position ({row}, {column})")
@@ -109,7 +110,7 @@ while running:
             previous_piece.selected = False
             selected_piece.selected = True
         elif previous_piece.is_white != None and previous_piece.selected: #capture piece if different color
-            if whites_turn == previous_piece.is_white and valid_move and Utils.move_keeps_king_safe(board, previous_row, previous_column, row, column, previous_piece.is_white): #check if piece color matches turn
+            if whites_turn == previous_piece.is_white and valid_move and Game.move_keeps_king_safe(board, previous_row, previous_column, row, column, previous_piece.is_white): #check if piece color matches turn
                 previous_piece.selected = False
                 selected_piece.selected = False
                 board[row][column] = board[previous_row][previous_column]
@@ -135,27 +136,23 @@ while running:
                 in_check_white = idk4.isInCheck(board)
             elif idk4.is_white == False and type(idk4) == Piece.King:   
                 in_check_black = idk4.isInCheck(board)
-            if in_check_white:
-                print(f"White king is in check!")
-            if in_check_black:
-                print(f"Black king is in check!")
 
     for idk5, idk6 in enumerate(board):
         for idk7, idk8 in enumerate(idk6):
             game_font = pygame.font.SysFont("Arial", 18)
             text_surface = game_font.render(f"{idk5}, {idk7}", True, (0, 0, 0))
-            screen.blit(text_surface, (idk7*(WIDTH/BOARD_COLUMNS), idk5*(HEIGHT/BOARD_ROWS)))
+            screen.blit(text_surface, (idk7*(GAME_WIDTH/BOARD_COLUMNS), idk5*(GAME_HEIGHT/BOARD_ROWS)))
 
-    if Utils.is_checkmate(board, True):
+    if Game.is_checkmate(board, True):
         print("Checkmate! Black wins!")
-        running = False
-    elif Utils.is_checkmate(board, False):
+        running = True
+    elif Game.is_checkmate(board, False):
         print("Checkmate! White wins!")
-        running = False
-    elif Utils.is_stalemate(board, True):
+        running = True
+    elif Game.is_stalemate(board, True):
         print("Stalemate! It's a draw!")
         running = False
-    elif Utils.is_stalemate(board, False):
+    elif Game.is_stalemate(board, False):
         print("Stalemate! It's a draw!")
         running = False
     pygame.display.flip()
