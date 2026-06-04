@@ -1,5 +1,5 @@
 import pygame
-
+pygame.font.init()
 FPS_CAP = 60
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
