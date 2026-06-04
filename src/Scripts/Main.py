@@ -6,6 +6,8 @@ from pygame import Vector2
 import Piece 
 import Game
 import Config
+import GeminiAgent
+import time
 
 class ChessPiece(Enum):
         EMPTY = 0
@@ -54,6 +56,8 @@ row = -1
 column = -1
 in_check_white = False
 in_check_black = False
+ran_out = False
+wait_a_frame = False
 
 #8 by 8 grid (white : 0-6, black : 7-13), 0 = empty, 1 = pawn, 2 = bishop, 3 = knight, 4 = rook, 5 = queen, 6 = king; refer to ChessPiece enum
 board : List[List[int]] = [
@@ -105,16 +109,44 @@ board : List[List[int]] = [
 # ]
 
 def updateTurnUI():
-    global whites_turn
+    global whites_turn, ran_out
     turn_text = "Turn: "
     if whites_turn:
         turn_text += "White"
     else:
-        turn_text += "Black"
+        turn_text += "AI (may take a few seconds)"
+
+    if ran_out:
+        turn_text = "Ran out of requests"
     screen.blit(Config.TURN_UI_FONT.render(turn_text, True, WHITE, (60,60,255)), (GAME_WIDTH + 10, 0), )
 
+def moveAI():
+    global whites_turn, ran_out
+    moveString = GeminiAgent.getMove(board)
+    if moveString == "":
+        ran_out = True
+        print("Ran out of requests")
+        sys.exit()
+        updateTurnUI()
+        return
+    updateTurnUI()
+    print("Response: " + moveString)
+    splitString = moveString.split(" ")
+    ai_row = splitString[0]
+    ai_column = splitString[1]
+    ai_piece = board[int(ai_row)][int(ai_column)]
+    move_ai_row = splitString[2]
+    move_ai_column = splitString[3]
+    print("Chosen piece: (" + ai_row + "," + ai_column + ")")
+    print("Moving to: (" + move_ai_row + "," + move_ai_column + ")")
+    move_ai_row = int(move_ai_row)
+    move_ai_column = int(move_ai_column)
+    valid_move = True if ai_piece.getValidMoves(board) != None and (move_ai_row, move_ai_column) in ai_piece.getValidMoves(board) else False
+    ai_piece.movePiece((move_ai_row, move_ai_column), board)
+    whites_turn = True
+
 def inputController():
-    global mouse_debounce, selected_piece, selected_move, previous_piece, previous_row, previous_column, whites_turn, row, column, selected_row, selected_column, selected_is_black
+    global wait_a_frame, mouse_debounce, selected_piece, selected_move, previous_piece, previous_row, previous_column, whites_turn, row, column, selected_row, selected_column, selected_is_black
     if pygame.mouse.get_pressed()[0] and not mouse_debounce:
         mouse_debounce = True
         mouse_pos = pygame.mouse.get_pos()
@@ -147,6 +179,8 @@ def inputController():
 
                 print(f"{type(previous_piece).__name__} at ({previous_row}, {previous_column}) captured {type(selected_piece).__name__} at position ({row}, {column})")
                 whites_turn = not whites_turn
+                print("switched to black")
+                wait_a_frame = True
             else:
                 selected_piece.selected = False
                 previous_piece.selected = False
@@ -160,7 +194,8 @@ while running:
     screen.fill((0,0,0))
     screen.blit(chessboard_image, (0,0))
  
-    inputController()
+    if whites_turn:
+        inputController()
 
     mouse_debounce = pygame.mouse.get_pressed()[0]
     previous_piece = selected_piece
@@ -181,7 +216,8 @@ while running:
             screen.blit(text_surface, (idk7*(GAME_WIDTH/BOARD_COLUMNS), idk5*(GAME_HEIGHT/BOARD_ROWS)))
 
     # UI rendering
-    updateTurnUI()
+    if whites_turn: 
+        updateTurnUI()
 
     # game ending checks
     if Game.is_checkmate(board, True):
@@ -196,6 +232,12 @@ while running:
     elif Game.is_stalemate(board, False):
         print("Stalemate! It's a draw!")
         running = False
+
+    if not whites_turn:
+        if not wait_a_frame:
+            moveAI()
+        wait_a_frame = False
+
     pygame.display.flip()
 
     clock.tick(FPS_CAP)
