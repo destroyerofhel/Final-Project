@@ -80,6 +80,30 @@ board : List[List[int]] = [
 #     [0,0,0,0,6,0,0,0]
 # ]
 
+#castle setup
+board = [
+    [4+7,0,0,0,6+7,0,0,4+7],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [4,0,0,0,6,0,0,4]
+]
+
+#castle setup
+board = [
+    [4+7,0,0,0,6+7,0,0,4+7],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [4,0,0,0,6,0,0,4]
+]
+
 def updateTurnUI():
     global whites_turn
     turn_text = "Turn: "
@@ -119,10 +143,7 @@ def inputController():
             if whites_turn == previous_piece.is_white and valid_move and Game.move_keeps_king_safe(board, previous_row, previous_column, row, column, previous_piece.is_white): #check if piece color matches turn
                 previous_piece.selected = False
                 selected_piece.selected = False
-                board[row][column] = board[previous_row][previous_column]
-                board[row][column].row = row
-                board[row][column].column = column
-                board[previous_row][previous_column] = Piece.Empty((previous_row, previous_column), None)
+                previous_piece.movePiece((row, column), board)
 
                 print(f"{type(previous_piece).__name__} at ({previous_row}, {previous_column}) captured {type(selected_piece).__name__} at position ({row}, {column})")
                 whites_turn = not whites_turn
@@ -171,13 +192,17 @@ while running:
         running = True
     elif Game.is_stalemate(board, True):
         print("Stalemate! It's a draw!")
-        running = False
+        running = True
     elif Game.is_stalemate(board, False):
         print("Stalemate! It's a draw!")
-        running = False
+        running = True
     pygame.display.flip()
 
     clock.tick(FPS_CAP)
-
+for row in board: #print the grid in number form
+    for piece in row:
+        piece_name = type(piece).__name__
+        print(ChessPiece[piece_name.upper()].value if piece.is_white == True else ChessPiece[piece_name.upper()].value + 7, end=" ")
+    print()
 pygame.quit()
 sys.exit()
