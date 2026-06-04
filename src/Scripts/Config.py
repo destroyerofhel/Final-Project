@@ -1,3 +1,5 @@
+import pygame
+
 FPS_CAP = 60
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -7,3 +9,4 @@ SRC_DIRECTORY = "src\\"
 SPRITES_DIRECTORY = SRC_DIRECTORY + "Data\\Sprites\\"
 GAME_WIDTH = 800
 GAME_HEIGHT = 800
+UI_FONT = pygame.font.SysFont("Arial", 18)
