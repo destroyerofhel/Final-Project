@@ -42,6 +42,19 @@ selected_column = -1
 selected_piece : ChessPiece = Piece.Empty((-1, -1), None)
 selected_is_black : bool = False
 
+chessboard_image = pygame.transform.scale(pygame.image.load("src\\Data\\Sprites\\board.png"), (GAME_WIDTH,GAME_HEIGHT))
+
+previous_piece = Piece.Empty((-1, -1), None)
+
+#makes it so the left click event doesn't run multiple times if you hold left mouse button down
+mouse_debounce = False
+whites_turn = True
+running = True
+row = -1
+column = -1
+in_check_white = False
+in_check_black = False
+
 #8 by 8 grid (white : 0-6, black : 7-13), 0 = empty, 1 = pawn, 2 = bishop, 3 = knight, 4 = rook, 5 = queen, 6 = king; refer to ChessPiece enum
 board : List[List[int]] = [
     [4+7,3+7,2+7,5+7,6+7,2+7,3+7,4+7],
@@ -67,30 +80,23 @@ board : List[List[int]] = [
 #     [0,0,0,0,6,0,0,0]
 # ]
 
+def updateTurnUI():
+    global whites_turn
+    turn_text = "Turn: "
+    if whites_turn:
+        turn_text += "White"
+    else:
+        turn_text += "Black"
+    screen.blit(Config.TURN_UI_FONT.render(turn_text, True, WHITE, (60,60,255)), (GAME_WIDTH + 10, 0), )
 
-Game.convertBoardToObj(board)
-
-chessboard_image = pygame.transform.scale(pygame.image.load("src\\Data\\Sprites\\board.png"), (GAME_WIDTH,GAME_HEIGHT))
-previous_piece = Piece.Empty((-1, -1), None)
-
-#makes it so the left click event doesn't run multiple times if you hold left mouse button down
-mouse_debounce = False
-whites_turn = True
-running = True
-row = -1
-column = -1
-in_check_white = False
-in_check_black = False
-
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    screen.blit(chessboard_image, (0,0))
- 
+def inputController():
+    global mouse_debounce, selected_piece, selected_move, previous_piece, previous_row, previous_column, whites_turn, row, column, selected_row, selected_column, selected_is_black
     if pygame.mouse.get_pressed()[0] and not mouse_debounce:
         mouse_debounce = True
         mouse_pos = pygame.mouse.get_pos()
+        if mouse_pos[0] > GAME_WIDTH or mouse_pos[1] > GAME_HEIGHT:
+            return
+
         column = int(mouse_pos[0] // (GAME_WIDTH/BOARD_COLUMNS))
         row = int(mouse_pos[1] // (GAME_HEIGHT/BOARD_ROWS))
         selected_piece = board[row][column]
@@ -124,6 +130,17 @@ while running:
                 selected_piece.selected = False
                 previous_piece.selected = False
 
+Game.convertBoardToObj(board)
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    screen.fill((0,0,0))
+    screen.blit(chessboard_image, (0,0))
+ 
+    inputController()
+
     mouse_debounce = pygame.mouse.get_pressed()[0]
     previous_piece = selected_piece
     previous_row = row
@@ -139,10 +156,13 @@ while running:
 
     for idk5, idk6 in enumerate(board):
         for idk7, idk8 in enumerate(idk6):
-            game_font = pygame.font.SysFont("Arial", 18)
-            text_surface = game_font.render(f"{idk5}, {idk7}", True, (0, 0, 0))
+            text_surface = Config.UI_FONT.render(f"{idk5}, {idk7}", True, (0, 0, 0))
             screen.blit(text_surface, (idk7*(GAME_WIDTH/BOARD_COLUMNS), idk5*(GAME_HEIGHT/BOARD_ROWS)))
 
+    # UI rendering
+    updateTurnUI()
+
+    # game ending checks
     if Game.is_checkmate(board, True):
         print("Checkmate! Black wins!")
         running = True
