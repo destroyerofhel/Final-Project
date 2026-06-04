@@ -10,4 +10,6 @@ SPRITES_DIRECTORY = SRC_DIRECTORY + "Data\\Sprites\\"
 GAME_WIDTH = 800
 GAME_HEIGHT = 800
 UI_FONT = pygame.font.SysFont("Arial", 18)
-TURN_UI_FONT = pygame.font.SysFont("Arial", 50)
+TURN_UI_FONT = pygame.font.SysFont("Arial", 30)
+GEMINI_MODEL = "gemini-2.5-flash-lite"
+SYSTEM_PROMPT = "You are a chess engine playing Black. Input is a FEN string. Output only source_row source_col moved_row moved_col. 0 0=top-left 7 7=bottom-right. Example 1 0 3 0"
