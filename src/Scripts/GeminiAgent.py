@@ -1,28 +1,68 @@
 from dotenv import load_dotenv
 from google import genai
 import os
+import Config
 
 load_dotenv()
-
-API_KEY = os.getenv("GEMINI_API_KEY")
-print(API_KEY)
 
 client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
 
-response = client.models.generate_content(
-    model="gemini-2.5-flash",
-    contents="I need you to respond with a VALID chess move to make when the board looks like this (B before name means Black, W before name means White):" \
-    "BPawn BPawn BPawn Empty Empty Empty Empty Empty" \
-    "Empty Empty Empty Empty Empty Empty Empty Empty" \
-    "Empty Empty Empty Empty Empty Empty Empty Empty" \
-    "Empty Empty Empty Empty Empty Empty Empty Empty" \
-    "Empty Empty Empty Empty Empty Empty Empty Empty" \
-    "Empty Empty Empty Empty Empty Empty Empty Empty" \
-    "Empty Empty Empty Empty Empty Empty Empty Empty" \
-    "WPawn WPawn WPawn Empty Empty Empty Empty Empty" \
-    "Respond with the row and column of the piece you want to move, and then the row and column it should move to (in coordinate pairs, where (0,0) is the top left corner and (7,7) is the bottom right corner), and nothing else (You are White)."
-)
+def board_to_fen(board):
+    piece_map = {
+        "Pawn": "p",
+        "Knight": "n",
+        "Bishop": "b",
+        "Rook": "r",
+        "Queen": "q",
+        "King": "k"
+    }
 
-print(response.text)
+    fen_rows = []
+
+    for row in board:
+        fen_row = ""
+        empty_count = 0
+
+        for piece in row:
+            piece_type = type(piece).__name__
+
+            if piece_type == "Empty":
+                empty_count += 1
+                continue
+
+            if empty_count:
+                fen_row += str(empty_count)
+                empty_count = 0
+
+            symbol = piece_map[piece_type]
+
+            if piece.is_white:
+                symbol = symbol.upper()
+
+            fen_row += symbol
+
+        if empty_count:
+            fen_row += str(empty_count)
+
+        fen_rows.append(fen_row)
+    return f"{'/'.join(fen_rows)} b - - 0 1"
+
+
+def getMove(board) -> str:
+    queryString = board_to_fen(board)
+
+    try:
+        response = client.models.generate_content(
+            model=Config.GEMINI_MODEL,
+            contents=queryString,
+            config=genai.types.GenerateContentConfig(
+                system_instruction=Config.SYSTEM_PROMPT
+            )
+        )
+
+        return response.text.strip()
+
+    except Exception as e:
+        return ""
