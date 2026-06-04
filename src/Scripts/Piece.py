@@ -173,7 +173,24 @@ class Empty(Piece):
         super().__init__(position, is_white)
 
 class Pawn(Piece):
-    piece_type = 1
+    moved_two_squares = False
+    def movePiece(self, new_position: tuple[int, int], board):
+        if abs(new_position[0] - self.row) == 2:
+            self.moved_two_squares = True
+        else:
+            self.moved_two_squares = False
+        for move in self.check_en_passant(board):
+            if new_position == move:
+                board[self.row][new_position[1]] = Empty((self.row, new_position[1]), None)
+                print(f"En passant capture at ({self.row}, {new_position[1]})")
+                break
+        if (self.is_white and new_position[0] == 0) or (not self.is_white and new_position[0] == Config.BOARD_ROWS - 1):
+            board[self.row][self.column] = Empty((self.row, self.column), None)
+            board[new_position[0]][new_position[1]] = Queen(new_position, self.is_white)
+            return True
+        else:
+            return super().movePiece(new_position, board)
+        
     def drawPiece(self, screen, board):
         color = "White"
         if(not self.is_white):
@@ -184,31 +201,60 @@ class Pawn(Piece):
 
         if self.selected:
             self.selectPiece(screen, board)
+    def check_en_passant(self, board):
+        moves = []
+        if self.row == 3:
+            if self.column > 0 and isinstance(board[self.row][self.column - 1], Pawn) and board[self.row][self.column - 1].is_white != self.is_white and board[self.row][self.column - 1].moved_two_squares:
+                moves.append((self.row - 1, self.column - 1))
+            if self.column < Config.BOARD_COLUMNS - 1 and isinstance(board[self.row][self.column + 1], Pawn) and board[self.row][self.column + 1].is_white != self.is_white and board[self.row][self.column + 1].moved_two_squares:
+                moves.append((self.row - 1, self.column + 1))
+        elif self.row == 4:
+            if self.column > 0 and isinstance(board[self.row][self.column - 1], Pawn) and board[self.row][self.column - 1].is_white != self.is_white and board[self.row][self.column - 1].moved_two_squares:
+                moves.append((self.row + 1, self.column - 1))
+            if self.column < Config.BOARD_COLUMNS - 1 and isinstance(board[self.row][self.column + 1], Pawn) and board[self.row][self.column + 1].is_white != self.is_white and board[self.row][self.column + 1].moved_two_squares:
+                moves.append((self.row + 1, self.column + 1))
+        return keepInBounds(moves)
     def getAvailableMoves(self, board):
         moves = []
         if self.is_white:
-            if not self.has_moved and board[self.row - 2][self.column].is_white == None and board[self.row - 1][self.column].is_white == None:
-                moves.append((self.row - 2, self.column))
-            if self.row > 0 and board[self.row - 1][self.column].is_white == None:
-                moves.append((self.row - 1, self.column))
-            if self.row > 0 and self.column > 0 and board[self.row - 1][self.column - 1].is_white != None and board[self.row - 1][self.column - 1].is_white != self.is_white:
-                moves.append((self.row - 1, self.column - 1))
-            if self.row > 0 and self.column < Config.BOARD_COLUMNS - 1 and board[self.row - 1][self.column + 1].is_white != None and board[self.row - 1][self.column + 1].is_white != self.is_white:
-                moves.append((self.row - 1, self.column + 1))
+            # forward 1
+            if self.row > 0:
+                if board[self.row - 1][self.column].is_white is None:
+                    moves.append((self.row - 1, self.column))
+            # forward 2
+            if self.row == 6:
+                if board[self.row - 2][self.column].is_white is None and board[self.row - 1][self.column].is_white is None:
+                    moves.append((self.row - 2, self.column))
+            # capture left
+            if self.row > 0 and self.column > 0:
+                if board[self.row - 1][self.column - 1].is_white == False:
+                    moves.append((self.row - 1, self.column - 1))
+            # capture right
+            if self.row > 0 and self.column < Config.BOARD_COLUMNS - 1:
+                if board[self.row - 1][self.column + 1].is_white == False:
+                    moves.append((self.row - 1, self.column + 1))
         else:
-            if not self.has_moved and board[self.row + 2][self.column].is_white == None and board[self.row + 1][self.column].is_white == None:
-                moves.append((self.row + 2, self.column))
-            if self.row < Config.BOARD_ROWS - 1 and board[self.row + 1][self.column].is_white == None:
-                moves.append((self.row + 1, self.column))
-            if self.row < Config.BOARD_ROWS - 1 and self.column > 0 and board[self.row + 1][self.column - 1].is_white != None and board[self.row + 1][self.column - 1].is_white != self.is_white:
-                moves.append((self.row + 1, self.column - 1))
-            if self.row < Config.BOARD_ROWS - 1 and self.column < Config.BOARD_COLUMNS - 1 and board[self.row + 1][self.column + 1].is_white != None and board[self.row + 1][self.column + 1].is_white != self.is_white:
-                moves.append((self.row + 1, self.column + 1))  
-        return keepInBounds(moves)
+            # forward 1
+            if self.row < Config.BOARD_ROWS - 1:
+                if board[self.row + 1][self.column].is_white is None:
+                    moves.append((self.row + 1, self.column))
+            # forward 2
+            if self.row == 1:
+                if board[self.row + 2][self.column].is_white is None and board[self.row + 1][self.column].is_white is None:
+                    moves.append((self.row + 2, self.column))
+            # capture left
+            if self.row < Config.BOARD_ROWS - 1 and self.column > 0:
+                if board[self.row + 1][self.column - 1].is_white == False:
+                    moves.append((self.row + 1, self.column - 1))
+            # capture right
+            if self.row < Config.BOARD_ROWS - 1 and self.column < Config.BOARD_COLUMNS - 1:
+                if board[self.row + 1][self.column + 1].is_white == False:
+                    moves.append((self.row + 1, self.column + 1))         
+        return keepInBounds(moves) + keepInBounds(self.check_en_passant(board))
 
 
 class Bishop(Piece):
-    piece_type = 2
+
     def drawPiece(self, screen, board):
         color = "White"
         if(not self.is_white):
@@ -230,7 +276,7 @@ class Bishop(Piece):
         return keepInBounds(moves)
 
 class Knight(Piece):
-    piece_type = 3
+
     def drawPiece(self, screen, board):
         color = "White"
         if(not self.is_white):
@@ -258,7 +304,7 @@ class Knight(Piece):
         return legal_moves
 
 class Rook(Piece):
-    piece_type = 4
+
     def drawPiece(self, screen, board):
         color = "White"
         if(not self.is_white):
@@ -279,7 +325,7 @@ class Rook(Piece):
         return keepInBounds(moves)
 
 class Queen(Piece):
-    piece_type = 5
+
     def drawPiece(self, screen, board):
         color = "White"
         if(not self.is_white):
@@ -305,7 +351,6 @@ class Queen(Piece):
         return moves
 
 class King(Piece):
-    piece_type = 6
 
     def drawPiece(self, screen, board):
         color = "White"

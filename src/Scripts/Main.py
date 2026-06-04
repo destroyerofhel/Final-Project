@@ -81,28 +81,28 @@ board : List[List[int]] = [
 # ]
 
 #castle setup
-board = [
-    [4+7,0,0,0,6+7,0,0,4+7],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [4,0,0,0,6,0,0,4]
-]
+# board = [
+#     [4+7,0,0,0,6+7,0,0,4+7],
+#     [0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0],
+#     [4,0,0,0,6,0,0,4]
+# ]
 
 #castle setup
-board = [
-    [4+7,0,0,0,6+7,0,0,4+7],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [4,0,0,0,6,0,0,4]
-]
+# board = [
+#     [4+7,0,0,0,6+7,0,0,4+7],
+#     [0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0],
+#     [0,0,0,0,0,0,0,0],
+#     [4,0,0,0,6,0,0,4]
+# ]
 
 def updateTurnUI():
     global whites_turn
@@ -186,16 +186,16 @@ while running:
     # game ending checks
     if Game.is_checkmate(board, True):
         print("Checkmate! Black wins!")
-        running = True
+        running = False
     elif Game.is_checkmate(board, False):
         print("Checkmate! White wins!")
-        running = True
+        running = False
     elif Game.is_stalemate(board, True):
         print("Stalemate! It's a draw!")
-        running = True
+        running = False
     elif Game.is_stalemate(board, False):
         print("Stalemate! It's a draw!")
-        running = True
+        running = False
     pygame.display.flip()
 
     clock.tick(FPS_CAP)
