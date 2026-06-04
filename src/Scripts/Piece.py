@@ -46,10 +46,10 @@ class Piece:
             y_pos = i[1]
             in_bounds = x_pos >= 0 and x_pos < Config.BOARD_ROWS and y_pos >= 0 and y_pos < Config.BOARD_COLUMNS
             if in_bounds:
-                x_size = Config.WIDTH // Config.BOARD_COLUMNS
-                y_size = Config.HEIGHT // Config.BOARD_ROWS
+                x_size = Config.GAME_WIDTH // Config.BOARD_COLUMNS
+                y_size = Config.GAME_HEIGHT // Config.BOARD_ROWS
 
-                radius = int((Config.WIDTH/Config.BOARD_COLUMNS) // 2 * 0.8)
+                radius = int((Config.GAME_WIDTH/Config.BOARD_COLUMNS) // 2 * 0.8)
                 move_surface = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
                 pygame.draw.circle(
                     move_surface,
@@ -161,7 +161,7 @@ class Pawn(Piece):
         color = "White"
         if(not self.is_white):
             color = "Black"
-        size = (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS)
+        size = (Config.GAME_WIDTH/Config.BOARD_COLUMNS,Config.GAME_HEIGHT/Config.BOARD_ROWS)
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "\\pawn.png"), size)
         screen.blit(loaded_image, (self.column*size[0], self.row*size[1]))
 
@@ -196,7 +196,7 @@ class Bishop(Piece):
         color = "White"
         if(not self.is_white):
             color = "Black"
-        size = (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS)
+        size = (Config.GAME_WIDTH/Config.BOARD_COLUMNS,Config.GAME_HEIGHT/Config.BOARD_ROWS)
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "\\bishop.png"), size)
         screen.blit(loaded_image, (self.column*size[0], self.row*size[1]))
 
@@ -218,7 +218,7 @@ class Knight(Piece):
         color = "White"
         if(not self.is_white):
             color = "Black"
-        size = (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS)
+        size = (Config.GAME_WIDTH/Config.BOARD_COLUMNS,Config.GAME_HEIGHT/Config.BOARD_ROWS)
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "\\knight.png"), size)
         screen.blit(loaded_image, (self.column*size[0], self.row*size[1]))
         if self.selected:
@@ -246,7 +246,7 @@ class Rook(Piece):
         color = "White"
         if(not self.is_white):
             color = "Black"
-        size = (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS)
+        size = (Config.GAME_WIDTH/Config.BOARD_COLUMNS,Config.GAME_HEIGHT/Config.BOARD_ROWS)
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "\\rook.png"), size)
         screen.blit(loaded_image, (self.column*size[0], self.row*size[1]))
 
@@ -267,7 +267,7 @@ class Queen(Piece):
         color = "White"
         if(not self.is_white):
             color = "Black"
-        size = (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS)
+        size = (Config.GAME_WIDTH/Config.BOARD_COLUMNS,Config.GAME_HEIGHT/Config.BOARD_ROWS)
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "\\queen.png"), size)
         screen.blit(loaded_image, (self.column*size[0], self.row*size[1]))
         
@@ -294,7 +294,7 @@ class King(Piece):
         color = "White"
         if(not self.is_white):
             color = "Black"
-        size = (Config.WIDTH/Config.BOARD_COLUMNS,Config.HEIGHT/Config.BOARD_ROWS)
+        size = (Config.GAME_WIDTH/Config.BOARD_COLUMNS,Config.GAME_HEIGHT/Config.BOARD_ROWS)
         loaded_image = pygame.transform.scale(pygame.image.load(Config.SPRITES_DIRECTORY + color + "\\king.png"), size)
         screen.blit(loaded_image, (self.column*size[0], self.row*size[1]))
 
