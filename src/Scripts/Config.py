@@ -10,3 +10,4 @@ SPRITES_DIRECTORY = SRC_DIRECTORY + "Data\\Sprites\\"
 GAME_WIDTH = 800
 GAME_HEIGHT = 800
 UI_FONT = pygame.font.SysFont("Arial", 18)
+TURN_UI_FONT = pygame.font.SysFont("Arial", 50)
