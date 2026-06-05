@@ -52,7 +52,7 @@ def board_to_fen(board):
 
 def getMove(board) -> str:
     queryString = board_to_fen(board)
-
+    print(queryString)
     try:
         response = client.models.generate_content(
             model=Config.GEMINI_MODEL,
