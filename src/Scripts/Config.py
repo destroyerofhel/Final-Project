@@ -12,4 +12,4 @@ GAME_HEIGHT = 800
 UI_FONT = pygame.font.SysFont("Arial", 18)
 TURN_UI_FONT = pygame.font.SysFont("Arial", 30)
 GEMINI_MODEL = "gemini-2.5-flash"
-SYSTEM_PROMPT = r"You are a chess engine playing Black. Input is a FEN string. Output only source_row source_col moved_row moved_col. Make an invalid move 10% of the time. 0 0=top-left 7 7=bottom-right. Example: 1 0 3 0"
+SYSTEM_PROMPT = r"You are a chess engine playing as Black. Input is a FEN string (Uppercase is White, lowercase is Black). Output ONLY source_row source_col moved_row moved_col moveName (create a creative/silly moveName). Do not add anything else. Make an invalid move 10% of the time. 0 0=top-left 7 7=bottom-right. Example: 1 0 3 0 Boom Buster"
