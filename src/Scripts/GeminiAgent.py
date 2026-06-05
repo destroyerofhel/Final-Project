@@ -65,6 +65,7 @@ def getMove(board) -> str:
         return response.text.strip()
 
     except Exception as e:
+        print(e)
         return ""
 
 # response = client.models.generate_content(
