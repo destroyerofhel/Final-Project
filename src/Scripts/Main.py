@@ -29,8 +29,8 @@ GAME_WIDTH = Config.GAME_WIDTH
 GAME_HEIGHT = Config.GAME_HEIGHT
 
 #SRC_DIRECTORY = "C:\\Users\\NathanielOlveira\\OneDrive - NYC Public Schools\\Documents\\AI chess game\\Final-Project-1\\src"
-SRC_DIRECTORY = "src"
-SPRITES_DIRECTORY = SRC_DIRECTORY + "\\Data\\Sprites"
+SRC_DIRECTORY = Config.SRC_DIRECTORY
+SPRITES_DIRECTORY = Config.SPRITES_DIRECTORY
 
 WHITE = (255, 255, 255)
 BLUE = (50, 100, 255)
@@ -44,7 +44,8 @@ selected_column = -1
 selected_piece : ChessPiece = Piece.Empty((-1, -1), None)
 selected_is_black : bool = False
 
-chessboard_image = pygame.transform.scale(pygame.image.load("src\\Data\\Sprites\\board.png"), (GAME_WIDTH,GAME_HEIGHT))
+chessboard_image = pygame.transform.scale(pygame.image.load(SPRITES_DIRECTORY + "board.png"), (GAME_WIDTH,GAME_HEIGHT))
+title_screen_image = pygame.transform.scale(pygame.image.load(SPRITES_DIRECTORY + "title screen.png"), (SCREEN_WIDTH,SCREEN_HEIGHT))
 
 previous_piece = Piece.Empty((-1, -1), None)
 
@@ -186,6 +187,20 @@ def inputController():
                 previous_piece.selected = False
 
 Game.convertBoardToObj(board)
+
+screen.blit(title_screen_image, (0,0))
+pygame.display.flip()
+
+clicked = False
+while not clicked:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            clicked = True
+            running = False
+    if pygame.mouse.get_pressed()[0]:
+        clicked = True
+    
+    
 
 while running:
     for event in pygame.event.get():
