@@ -59,6 +59,7 @@ in_check_white = False
 in_check_black = False
 ran_out = False
 wait_a_frame = False
+move_name = ""
 
 #8 by 8 grid (white : 0-6, black : 7-13), 0 = empty, 1 = pawn, 2 = bishop, 3 = knight, 4 = rook, 5 = queen, 6 = king; refer to ChessPiece enum
 board : List[List[int]] = [
@@ -109,8 +110,8 @@ board : List[List[int]] = [
 #     [4,0,0,0,6,0,0,4]
 # ]
 
-def updateTurnUI():
-    global whites_turn, ran_out
+def updateUI():
+    global whites_turn, ran_out, move_name
     turn_text = "Turn: "
     if whites_turn:
         turn_text += "White"
@@ -120,24 +121,28 @@ def updateTurnUI():
     if ran_out:
         turn_text = "Ran out of requests"
     screen.blit(Config.TURN_UI_FONT.render(turn_text, True, WHITE, (60,60,255)), (GAME_WIDTH + 10, 0), )
+    screen.blit(Config.TURN_UI_FONT.render("Move: " + move_name, True, WHITE, (60,60,255)), (GAME_WIDTH + 10, 50))
 
 def moveAI():
-    global whites_turn, ran_out
+    global whites_turn, ran_out, move_name
     moveString = GeminiAgent.getMove(board)
     print("Response: " + moveString)
     if moveString == "":
         ran_out = True
         print("Ran out of requests")
         sys.exit()
-        updateTurnUI()
+        updateUI()
         return
-    updateTurnUI()
+    updateUI()
     splitString = moveString.split(" ")
     ai_row = splitString[0]
     ai_column = splitString[1]
     ai_piece = board[int(ai_row)][int(ai_column)]
     move_ai_row = splitString[2]
     move_ai_column = splitString[3]
+    move_name = ""
+    for i in range(4,len(splitString)):
+        move_name += splitString[i] + " "
     print("Chosen piece: (" + ai_row + "," + ai_column + ")")
     print("Moving to: (" + move_ai_row + "," + move_ai_column + ")")
     move_ai_row = int(move_ai_row)
@@ -231,7 +236,7 @@ while running:
             screen.blit(text_surface, (idk7*(GAME_WIDTH/BOARD_COLUMNS), idk5*(GAME_HEIGHT/BOARD_ROWS)))
 
     # UI rendering
-    updateTurnUI()
+    updateUI()
 
     # game ending checks
     if Game.is_checkmate(board, True):
