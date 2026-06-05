@@ -47,7 +47,7 @@ def board_to_fen(board):
             fen_row += str(empty_count)
 
         fen_rows.append(fen_row)
-    return f"{'/'.join(fen_rows)} b - - 0 1"
+    return f"{'/'.join(fen_rows)}"
 
 
 def getMove(board) -> str:
@@ -66,3 +66,17 @@ def getMove(board) -> str:
 
     except Exception as e:
         return ""
+
+# response = client.models.generate_content(
+#     model=Config.GEMINI_MODEL,
+#     contents="I need you to respond with a VALID chess move to make when the board looks like this (B before name means Black, W before name means White):" \
+#     "BPawn BPawn BPawn Empty Empty Empty Empty Empty" \
+#     "Empty Empty Empty Empty Empty Empty Empty Empty" \
+#     "Empty Empty Empty Empty Empty Empty Empty Empty" \
+#     "Empty Empty Empty Empty Empty Empty Empty Empty" \
+#     "Empty Empty Empty Empty Empty Empty Empty Empty" \
+#     "Empty Empty Empty Empty Empty Empty Empty Empty" \
+#     "Empty Empty Empty Empty Empty Empty Empty Empty" \
+#     "WPawn WPawn WPawn Empty Empty Empty Empty Empty" \
+#     "Respond with the row and column of the piece you want to move, and then the row and column it should move to (in coordinate pairs, where (0,0) is the top left corner and (7,7) is the bottom right corner), and nothing else (You are White)."
+# )
