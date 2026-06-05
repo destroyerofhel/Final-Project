@@ -123,6 +123,7 @@ def updateTurnUI():
 def moveAI():
     global whites_turn, ran_out
     moveString = GeminiAgent.getMove(board)
+    print("Response: " + moveString)
     if moveString == "":
         ran_out = True
         print("Ran out of requests")
@@ -130,7 +131,6 @@ def moveAI():
         updateTurnUI()
         return
     updateTurnUI()
-    print("Response: " + moveString)
     splitString = moveString.split(" ")
     ai_row = splitString[0]
     ai_column = splitString[1]
@@ -216,8 +216,7 @@ while running:
             screen.blit(text_surface, (idk7*(GAME_WIDTH/BOARD_COLUMNS), idk5*(GAME_HEIGHT/BOARD_ROWS)))
 
     # UI rendering
-    if whites_turn: 
-        updateTurnUI()
+    updateTurnUI()
 
     # game ending checks
     if Game.is_checkmate(board, True):
