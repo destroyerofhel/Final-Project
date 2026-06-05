@@ -47,6 +47,7 @@ selected_is_black : bool = False
 
 chessboard_image = pygame.transform.scale(pygame.image.load(SPRITES_DIRECTORY + "board.png"), (GAME_WIDTH,GAME_HEIGHT))
 title_screen_image = pygame.transform.scale(pygame.image.load(SPRITES_DIRECTORY + "title screen.png"), (SCREEN_WIDTH,SCREEN_HEIGHT))
+title_screen_hover_image = pygame.transform.scale(pygame.image.load(SPRITES_DIRECTORY + "title screen hover.png"), (SCREEN_WIDTH,SCREEN_HEIGHT))
 
 previous_piece = Piece.Empty((-1, -1), None)
 
@@ -58,9 +59,12 @@ row = -1
 column = -1
 in_check_white = False
 in_check_black = False
-ran_out = False
+error_found = False
 wait_a_frame = False
 move_name = ""
+
+BUTTON_START = (416, 344)
+BUTTON_END = (768, 448)
 
 #8 by 8 grid (white : 0-6, black : 7-13), 0 = empty, 1 = pawn, 2 = bishop, 3 = knight, 4 = rook, 5 = queen, 6 = king; refer to ChessPiece enum
 board : List[List[int]] = [
@@ -112,27 +116,29 @@ board : List[List[int]] = [
 # ]
 
 def updateUI():
-    global whites_turn, ran_out, move_name
+    global whites_turn, error_found, move_name
     turn_text = "Turn: "
     if whites_turn:
         turn_text += "White"
     else:
         turn_text += "AI is thinking..."
 
-    if ran_out:
-        turn_text = "Ran out of requests"
+    if error_found:
+        turn_text = "Hit an error, retrying in 1 second"
     screen.blit(Config.TURN_UI_FONT.render(turn_text, True, WHITE, (60,60,255)), (GAME_WIDTH + 10, 0), )
     screen.blit(Config.TURN_UI_FONT.render("Move: " + move_name, True, WHITE, (60,60,255)), (GAME_WIDTH + 10, 50))
 
 def moveAI():
-    global whites_turn, ran_out, move_name
-    moveString = threading.Thread(target=GeminiAgent.getMove, args=(board,)).start()
+    global whites_turn, error_found, move_name, wait_a_frame
+    moveString = GeminiAgent.getMove(board)
     print("Response: " + moveString)
     if moveString == "":
-        ran_out = True
-        print("Ran out of requests")
-        sys.exit()
+        error_found = True
+        print("Ran into an error, retrying in 1 second")
         updateUI()
+        time.sleep(1)
+        error_found = False
+        wait_a_frame = True
         return
     updateUI()
     splitString = moveString.split(" ")
@@ -195,7 +201,6 @@ def inputController():
 Game.convertBoardToObj(board)
 
 screen.blit(title_screen_image, (0,0))
-pygame.display.flip()
 
 clicked = False
 while not clicked:
@@ -203,8 +208,14 @@ while not clicked:
         if event.type == pygame.QUIT:
             clicked = True
             running = False
+    mouse_pos = pygame.mouse.get_pos()
+    if (mouse_pos[0] > BUTTON_START[0] and mouse_pos[1] > BUTTON_START[1]) and (mouse_pos[0] < BUTTON_END[0] and mouse_pos[1] < BUTTON_END[1]):
+        screen.blit(title_screen_hover_image, (0,0))
+    else:
+        screen.blit(title_screen_image, (0,0))
     if pygame.mouse.get_pressed()[0]:
         clicked = True
+    pygame.display.flip()
     
     
 
