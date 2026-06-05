@@ -8,6 +8,7 @@ import Game
 import Config
 import GeminiAgent
 import time
+import threading
 
 class ChessPiece(Enum):
         EMPTY = 0
@@ -116,7 +117,7 @@ def updateUI():
     if whites_turn:
         turn_text += "White"
     else:
-        turn_text += "AI (may take a few seconds)"
+        turn_text += "AI is thinking..."
 
     if ran_out:
         turn_text = "Ran out of requests"
@@ -125,7 +126,7 @@ def updateUI():
 
 def moveAI():
     global whites_turn, ran_out, move_name
-    moveString = GeminiAgent.getMove(board)
+    moveString = threading.Thread(target=GeminiAgent.getMove, args=(board,)).start()
     print("Response: " + moveString)
     if moveString == "":
         ran_out = True
