@@ -7,3 +7,5 @@ zhixuandong123 (Zhixuan Dong) worked on the object-oriented implementation of ch
 
 # Research Paper
 https://sms.onlinelibrary.wiley.com/doi/full/10.1002/smj.3512
+
+This research paper has shown us that chess AI training can help people learn important skills like critical thinking, problem solving, and how to respond to unexpected events.
